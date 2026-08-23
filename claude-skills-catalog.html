@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Skills — a card catalog by Zakarya Belleboukh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c2620;
+    --ink-soft:#2c372f;
+    --card:#ede6d6;
+    --card-hi:#f6f1e6;
+    --paper:#f7f4ec;
+    --brass:#a9822f;
+    --brass-dim:#8a7148;
+    --stamp:#a23b2e;
+    --sage:#7c8a7a;
+    --rule: rgba(28,38,32,0.16);
+    --shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 10px 24px rgba(28,38,32,0.18);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--brass); color:var(--ink); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  }
+
+  a{ color:inherit; }
+  h1,h2,h3{ font-family:'Newsreader', serif; font-weight:500; margin:0; }
+
+  .grain{
+    position:fixed; inset:0; pointer-events:none; z-index:5; opacity:0.045; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- Header / drawer label ---------- */
+  header{
+    position:relative;
+    padding: 5.5rem 6vw 6rem;
+    border-bottom:1px solid rgba(247,244,236,0.14);
+    overflow:hidden;
+  }
+  .rail{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'IBM Plex Mono', monospace; font-size:0.72rem; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--sage); margin-bottom:4.5rem;
+  }
+  .rail .brand{ color:var(--paper); font-weight:500; }
+  .rail .brand em{ font-style:normal; color:var(--brass); }
+  .drawer-label{
+    max-width: 880px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:0.78rem; letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--brass); display:flex; align-items:center; gap:0.75rem; margin-bottom:1.4rem;
+  }
+  .eyebrow::before{ content:''; width:26px; height:1px; background:var(--brass); display:inline-block; }
+  h1.title{
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height:1.03;
+    color:var(--paper);
+    letter-spacing:-0.01em;
+  }
+  h1.title .accent{ color:var(--brass); font-style:italic; }
+  .drawer-sub{
+    margin-top:1.6rem; max-width:52ch; font-size:1.08rem; line-height:1.65; color:#cfd3c7;
+  }
+  .drawer-meta{
+    margin-top:3rem; display:flex; flex-wrap:wrap; gap:2.4rem;
+  }
+  .drawer-meta .stat{ font-family:'IBM Plex Mono', monospace; }
+  .drawer-meta .stat .n{ font-size:1.9rem; color:var(--paper); display:block; }
+  .drawer-meta .stat .l{ font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--sage); }
+
+  .cta-row{ margin-top:2.6rem; display:flex; gap:1rem; flex-wrap:wrap; }
+  .btn{
+    font-family:'IBM Plex Mono', monospace; font-size:0.82rem; letter-spacing:0.04em;
+    padding:0.85rem 1.5rem; border-radius:2px; text-decoration:none; display:inline-flex; align-items:center; gap:0.6rem;
+    border:1px solid transparent; transition: transform 0.15s ease, background 0.15s ease, border-color .15s ease;
+  }
+  .btn-primary{ background:var(--brass); color:var(--ink); }
+  .btn-primary:hover{ transform:translateY(-2px); background:#c19a45; }
+  .btn-ghost{ border-color:rgba(247,244,236,0.35); color:var(--paper); }
+  .btn-ghost:hover{ border-color:var(--paper); transform:translateY(-2px); }
+
+  /* index card motif floating in header */
+  .index-card-deco{
+    position:absolute; right:6vw; top:5.5rem; width:230px;
+    background:var(--card); color:var(--ink); border-radius:2px;
+    box-shadow: var(--shadow);
+    transform: rotate(4deg);
+    font-family:'IBM Plex Mono', monospace;
+    display:none;
+  }
+  .index-card-deco .tab{ position:absolute; top:-14px; left:18px; width:52px; height:16px; background:var(--stamp); border-radius:2px 2px 0 0; }
+  .index-card-deco .body{ padding:1.4rem 1.1rem 1.2rem; }
+  .index-card-deco .rule{ border-top:1px dashed var(--rule); margin:0.6rem 0; }
+  .index-card-deco .fname{ font-size:0.72rem; color:var(--brass-dim); }
+  .index-card-deco .desc{ font-family:'Newsreader', serif; font-size:0.95rem; line-height:1.4; margin-top:0.35rem; }
+  @media (min-width: 980px){ .index-card-deco{ display:block; } }
+
+  /* ---------- Philosophy strip ---------- */
+  .philosophy{
+    padding: 4.5rem 6vw; max-width:1180px; margin:0 auto;
+    display:grid; grid-template-columns: 1fr 1.6fr; gap:3rem; align-items:start;
+    border-bottom:1px solid rgba(247,244,236,0.1);
+  }
+  .philosophy .label{
+    font-family:'IBM Plex Mono', monospace; font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--sage);
+  }
+  .philosophy p{
+    font-size:1.2rem; line-height:1.7; color:#e3e5db; margin:0;
+  }
+  .philosophy p + p{ margin-top:1rem; }
+  @media (max-width: 760px){ .philosophy{ grid-template-columns:1fr; } }
+
+  /* ---------- Catalog ---------- */
+  .catalog{ padding: 5rem 6vw 7rem; background:var(--paper); color:var(--ink); }
+  .catalog-head{
+    display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1.5rem;
+    max-width:1180px; margin: 0 auto 2.6rem;
+  }
+  .catalog-head h2{ font-size:clamp(1.9rem, 3.4vw, 2.6rem); color:var(--ink); }
+  .catalog-head .count{ font-family:'IBM Plex Mono', monospace; font-size:0.82rem; color:var(--brass-dim); }
+
+  .tabs{
+    max-width:1180px; margin:0 auto 3rem; display:flex; flex-wrap:wrap; gap:0.6rem;
+    border-bottom:1px solid var(--rule); padding-bottom:1.6rem;
+  }
+  .tab-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:0.76rem; letter-spacing:0.05em;
+    padding:0.55rem 1rem; border-radius:999px; border:1px solid var(--rule); background:transparent;
+    color:var(--ink-soft); cursor:pointer; transition: all .15s ease;
+  }
+  .tab-btn .dot{ display:inline-block; width:7px; height:7px; border-radius:50%; margin-inline-end:0.5rem; }
+  .tab-btn.active, .tab-btn:hover{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+
+  .grid{
+    max-width:1180px; margin:0 auto;
+    display:grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap:1.4rem;
+  }
+
+  .card{
+    position:relative; background:var(--card); border-radius:3px; box-shadow: var(--shadow);
+    padding: 1.6rem 1.5rem 1.4rem; transition: transform .2s ease, box-shadow .2s ease;
+    display:flex; flex-direction:column; min-height:210px;
+  }
+  .card:hover{ transform: translateY(-4px); box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 18px 30px rgba(28,38,32,0.24); }
+  .card .tab-flag{
+    position:absolute; top:-10px; left:20px; padding:0.2rem 0.6rem; border-radius:2px 2px 0 0;
+    font-family:'IBM Plex Mono', monospace; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--paper);
+  }
+  .card .idx{
+    font-family:'IBM Plex Mono', monospace; font-size:0.68rem; color:var(--brass-dim); letter-spacing:0.04em;
+  }
+  .card h3{
+    font-size:1.28rem; margin-top:0.55rem; color:var(--ink); line-height:1.2;
+  }
+  .card .desc{
+    font-size:0.92rem; line-height:1.55; color:var(--ink-soft); margin-top:0.6rem; flex-grow:1;
+  }
+  .card .rule{ border-top:1px dashed var(--rule); margin:0.9rem 0 0.7rem; }
+  .card .footrow{
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .card .fname{ font-family:'IBM Plex Mono', monospace; font-size:0.68rem; color:var(--sage); }
+  .card .open{
+    font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--ink); text-decoration:none; opacity:0.7;
+  }
+  .card .open:hover{ opacity:1; text-decoration:underline; }
+  .card.hidden{ display:none; }
+
+  /* ---------- Install ---------- */
+  .install{
+    padding: 6rem 6vw; background:var(--ink);
+  }
+  .install-inner{
+    max-width:1180px; margin:0 auto; display:grid; grid-template-columns: 1fr 1fr; gap:3.5rem;
+  }
+  @media (max-width: 800px){ .install-inner{ grid-template-columns:1fr; } }
+  .install h2{ color:var(--paper); font-size:clamp(1.8rem,3vw,2.3rem); margin-bottom:1.2rem; }
+  .install p{ color:#cfd3c7; line-height:1.7; font-size:1rem; }
+  .steps{ counter-reset:step; margin-top:1.5rem; }
+  .step{
+    counter-increment:step; padding:1rem 0 1rem 2.6rem; position:relative;
+    border-bottom:1px solid rgba(247,244,236,0.12);
+    font-size:0.95rem; color:#e3e5db; line-height:1.5;
+  }
+  .step:last-child{ border-bottom:none; }
+  .step::before{
+    content: counter(step);
+    position:absolute; left:0; top:1rem; font-family:'IBM Plex Mono', monospace;
+    color:var(--brass); font-size:0.85rem; border:1px solid var(--brass-dim); width:1.6rem; height:1.6rem;
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+  }
+  code, .code{ font-family:'IBM Plex Mono', monospace; background:rgba(247,244,236,0.08); padding:0.15rem 0.4rem; border-radius:3px; font-size:0.88em; color:var(--brass); }
+
+  .drawer-note{
+    background:var(--card); color:var(--ink); border-radius:3px; padding:1.6rem 1.7rem; box-shadow:var(--shadow);
+    font-family:'Newsreader', serif; font-size:1.05rem; line-height:1.6; align-self:start;
+  }
+  .drawer-note .stamp{
+    display:inline-block; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--stamp); border:1px solid var(--stamp); padding:0.2rem 0.5rem; border-radius:2px;
+    margin-bottom:0.9rem; transform:rotate(-2deg);
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    padding: 3rem 6vw; background:var(--ink); border-top:1px solid rgba(247,244,236,0.12);
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;
+    font-family:'IBM Plex Mono', monospace; font-size:0.75rem; color:var(--sage);
+  }
+  footer a{ color:var(--paper); text-decoration:none; border-bottom:1px solid var(--brass); }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<header>
+  <div class="rail">
+    <span class="brand">Claude Skills <em>Catalog</em></span>
+    <span>zakaryabelleboukh / claude-skills</span>
+  </div>
+
+  <div class="drawer-label">
+    <div class="eyebrow">Drawer 01 — 21 specializations on file</div>
+    <h1 class="title">A card catalog<br>for a sharper <span class="accent">Claude</span>.</h1>
+    <p class="drawer-sub">Twenty-one production-oriented Claude Skills — each one a filed specialization in design, product, marketing, publishing, and freelancing. Pull the drawer, find the expert, put it to work.</p>
+
+    <div class="drawer-meta">
+      <div class="stat"><span class="n">21</span><span class="l">Skills filed</span></div>
+      <div class="stat"><span class="n">05</span><span class="l">Departments</span></div>
+      <div class="stat"><span class="n">01</span><span class="l">SKILL.md each</span></div>
+    </div>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/zakaryabelleboukh/claude-skills" target="_blank" rel="noopener">Open the repository ↗</a>
+      <a class="btn btn-ghost" href="#catalog">Browse the catalog</a>
+    </div>
+  </div>
+
+  <div class="index-card-deco">
+    <div class="tab"></div>
+    <div class="body">
+      <div class="fname">ui-ux-master/SKILL.md</div>
+      <div class="desc">End-to-end UI/UX and Product Design</div>
+      <div class="rule"></div>
+      <div class="fname">Filed under — Design &amp; UX</div>
+    </div>
+  </div>
+</header>
+
+<section class="philosophy">
+  <div class="label">Design philosophy</div>
+  <div>
+    <p>These skills are built to make Claude operate as a specialized expert rather than a generic chatbot — the way a good library doesn't hand you every book at once, it hands you the right one.</p>
+    <p>Each entry emphasizes structured workflows, reusable systems, verification, quality control, explicit assumptions, and honest handling of uncertainty. Self-contained, and readable in the time it takes to open a folder.</p>
+  </div>
+</section>
+
+<section class="catalog" id="catalog">
+  <div class="catalog-head">
+    <h2>The full drawer</h2>
+    <span class="count" id="resultCount">21 entries</span>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab-btn active" data-filter="all">All departments</button>
+    <button class="tab-btn" data-filter="design"><span class="dot" style="background:#5b7a63"></span>Design &amp; UX</button>
+    <button class="tab-btn" data-filter="product"><span class="dot" style="background:#a9822f"></span>Product &amp; Business</button>
+    <button class="tab-btn" data-filter="marketing"><span class="dot" style="background:#a23b2e"></span>Marketing &amp; Content</button>
+    <button class="tab-btn" data-filter="freelance"><span class="dot" style="background:#4a6a8a"></span>Freelancing</button>
+    <button class="tab-btn" data-filter="publishing"><span class="dot" style="background:#6b4a8a"></span>Publishing</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</section>
+
+<section class="install">
+  <div class="install-inner">
+    <div>
+      <h2>Pulling a card from the drawer</h2>
+      <p>Every skill is self-contained — one folder, one <span class="code">SKILL.md</span>, ready to load into Claude's Skills interface.</p>
+      <div class="steps">
+        <div class="step">Clone or download <span class="code">claude-skills</span> from GitHub.</div>
+        <div class="step">Open the folder for the specialization you need — say, <span class="code">figma-expert/</span>.</div>
+        <div class="step">Add its <span class="code">SKILL.md</span> to Claude's Skills interface.</div>
+        <div class="step">For connector-dependent skills (Figma Expert, and similar), make sure the matching tool or connector is available to Claude.</div>
+      </div>
+    </div>
+    <div class="drawer-note">
+      <span class="stamp">Filed &amp; verified</span>
+      <p>These are independent, community-created Claude Skills — not official Anthropic, Amazon, Figma, Meta, or Google products. Current platform requirements are worth checking whenever they materially affect a workflow.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Zakarya Belleboukh — catalog compiled from <a href="https://github.com/zakaryabelleboukh/claude-skills" target="_blank" rel="noopener">claude-skills</a></span>
+  <span>Author — <a href="https://github.com/zakaryabelleboukh" target="_blank" rel="noopener">@zakaryabelleboukh</a></span>
+</footer>
+
+<script>
+const skills = [
+  {name:"UI/UX Master", slug:"ui-ux-master", desc:"End-to-end UI/UX and Product Design", cat:"design"},
+  {name:"Figma Expert", slug:"figma-expert", desc:"Figma workflows, Auto Layout, components, variables and handoff", cat:"design"},
+  {name:"Design System Architect", slug:"design-system-architect", desc:"Scalable tokens, components and design-system architecture", cat:"design"},
+  {name:"UX Researcher", slug:"ux-researcher", desc:"Research planning, interviews, usability testing and synthesis", cat:"design"},
+  {name:"UX Audit Expert", slug:"ux-audit-expert", desc:"Rigorous UX/UI audits and prioritized recommendations", cat:"design"},
+  {name:"Mobile App Product Expert", slug:"mobile-app-product-expert", desc:"iOS/Android product flows and UX", cat:"design"},
+  {name:"Web Product Expert", slug:"web-product-expert", desc:"SaaS, web apps, websites and responsive product UX", cat:"design"},
+
+  {name:"AI Product Builder", slug:"ai-product-builder", desc:"Idea-to-PRD and implementation-ready product planning", cat:"product"},
+  {name:"Business Requirements Analyst", slug:"business-requirements-analyst", desc:"Requirements, scope, stories and acceptance criteria", cat:"product"},
+  {name:"SaaS Product Strategist", slug:"saas-product-strategist", desc:"SaaS positioning, MVP, pricing, retention and roadmap", cat:"product"},
+  {name:"Startup Strategist", slug:"startup-strategist", desc:"Startup validation, business models and growth hypotheses", cat:"product"},
+  {name:"Pricing Strategist", slug:"pricing-strategist", desc:"Service/product pricing and packaging scenarios", cat:"product"},
+  {name:"Ecommerce Expert", slug:"ecommerce-expert", desc:"E-commerce UX, merchandising and conversion analysis", cat:"product"},
+  {name:"CRO Expert", slug:"cro-expert", desc:"Conversion optimization and experiment design", cat:"product"},
+
+  {name:"Marketing Strategist", slug:"marketing-strategist", desc:"Ethical marketing strategy, channels and campaigns", cat:"marketing"},
+  {name:"SEO Expert", slug:"seo-expert", desc:"Search intent, content architecture and technical SEO planning", cat:"marketing"},
+  {name:"Copywriting Expert", slug:"copywriting-expert", desc:"Conversion-focused copy and messaging", cat:"marketing"},
+  {name:"Facebook Community Content Engine", slug:"facebook-community-content-engine", desc:"Facebook community posts and paired visual concepts", cat:"marketing"},
+  {name:"Prompt Engineering Master", slug:"prompt-engineering-master", desc:"Reusable prompts for AI, research, coding, design and automation", cat:"marketing"},
+
+  {name:"Freelance Business Agent", slug:"freelance-business-agent", desc:"Client communication, scope, pricing and negotiation", cat:"freelance"},
+  {name:"Proposal Generator", slug:"proposal-generator", desc:"Professional freelance proposals and quotations", cat:"freelance"},
+
+  {name:"Amazon KDP Publishing Expert", slug:"amazon-kdp-publishing-expert", desc:"Book planning, editing, metadata, cover planning and KDP QA", cat:"publishing"},
+];
+
+const catMeta = {
+  design:    {label:"Design & UX",           color:"#5b7a63"},
+  product:   {label:"Product & Business",    color:"#a9822f"},
+  marketing: {label:"Marketing & Content",   color:"#a23b2e"},
+  freelance: {label:"Freelancing",           color:"#4a6a8a"},
+  publishing:{label:"Publishing",            color:"#6b4a8a"},
+};
+
+const grid = document.getElementById('grid');
+const countEl = document.getElementById('resultCount');
+const baseUrl = "https://github.com/zakaryabelleboukh/claude-skills/blob/main/";
+
+function render(){
+  grid.innerHTML = skills.map((s, i) => {
+    const meta = catMeta[s.cat];
+    const idx = String(i+1).padStart(2,'0');
+    return `
+    <div class="card" data-cat="${s.cat}">
+      <div class="tab-flag" style="background:${meta.color}">${meta.label}</div>
+      <div class="idx">No. ${idx}</div>
+      <h3>${s.name}</h3>
+      <div class="desc">${s.desc}</div>
+      <div class="rule"></div>
+      <div class="footrow">
+        <span class="fname">${s.slug}/SKILL.md</span>
+        <a class="open" href="${baseUrl}${s.slug}" target="_blank" rel="noopener">Open →</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+render();
+
+const tabs = document.querySelectorAll('.tab-btn');
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabs.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    const cards = document.querySelectorAll('.card');
+    let visible = 0;
+    cards.forEach(c => {
+      const show = filter === 'all' || c.dataset.cat === filter;
+      c.classList.toggle('hidden', !show);
+      if(show) visible++;
+    });
+    countEl.textContent = `${visible} ${visible === 1 ? 'entry' : 'entries'}`;
+  });
+});
+</script>
+
+</body>
+</html>
