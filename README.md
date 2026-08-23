@@ -40,6 +40,6 @@ These are independent community-created Claude Skills and are not official Anthr
 
 ## Author
 
-**Zakarya Bellebouk**
+Zakarya Belleboukh
 
 GitHub: [@zakaryabelleboukh](https://github.com/zakaryabelleboukh)
