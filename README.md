@@ -1,4 +1,4 @@
-# 🧠 Claude Skills by Zakarya Bellebouk
+# 🧠 Claude Skills by Zakarya Belleboukh
 
 A curated collection of production-oriented Claude Skills for AI-assisted design, product strategy, publishing, marketing, research, content, and freelance workflows.
 
@@ -96,6 +96,6 @@ These are independent community-created Claude Skills. They are not official Ant
 
 ## 👤 Author
 
-**Zakarya Bellebouk**
+**Zakarya Belleboukh**
 
 GitHub: [@zakaryabelleboukh](https://github.com/zakaryabelleboukh)
