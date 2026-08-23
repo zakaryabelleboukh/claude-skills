@@ -1,4 +1,4 @@
-# 🧠 Claude Skills by Zakarya Bellebouk
+# 🧠 Claude Skills by Zakarya Belleboukh
 
 A curated collection of production-oriented Claude Skills for AI-assisted design, publishing, content creation, and professional workflows.
 
